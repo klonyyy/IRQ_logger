@@ -28,16 +28,15 @@ extern "C" {
 
 /* Includes ------------------------------------------------------------------*/
 #include "stm32g4xx_hal.h"
-#include "stm32g4xx_ll_dma.h"
 #include "stm32g4xx_ll_tim.h"
-#include "stm32g4xx_ll_usart.h"
-#include "stm32g4xx_ll_rcc.h"
 #include "stm32g4xx_ll_bus.h"
 #include "stm32g4xx_ll_cortex.h"
+#include "stm32g4xx_ll_rcc.h"
 #include "stm32g4xx_ll_system.h"
 #include "stm32g4xx_ll_utils.h"
 #include "stm32g4xx_ll_pwr.h"
 #include "stm32g4xx_ll_gpio.h"
+#include "stm32g4xx_ll_dma.h"
 
 #include "stm32g4xx_ll_exti.h"
 
@@ -68,10 +67,20 @@ void Error_Handler(void);
 /* USER CODE END EFP */
 
 /* Private defines -----------------------------------------------------------*/
-#define LED_Pin GPIO_PIN_4
-#define LED_GPIO_Port GPIOA
-#define LED1_Pin GPIO_PIN_5
-#define LED1_GPIO_Port GPIOA
+#define LED_Pin GPIO_PIN_11
+#define LED_GPIO_Port GPIOB
+#define LED1_Pin GPIO_PIN_12
+#define LED1_GPIO_Port GPIOB
+#define LED2_Pin GPIO_PIN_6
+#define LED2_GPIO_Port GPIOC
+#define S3_Pin GPIO_PIN_10
+#define S3_GPIO_Port GPIOC
+#define S2_Pin GPIO_PIN_11
+#define S2_GPIO_Port GPIOC
+#define S4_Pin GPIO_PIN_5
+#define S4_GPIO_Port GPIOB
+#define S1_Pin GPIO_PIN_6
+#define S1_GPIO_Port GPIOB
 /* USER CODE BEGIN Private defines */
 #define LED_ON  LL_GPIO_SetOutputPin(LED_GPIO_Port, LED_Pin);
 #define LED_OFF LL_GPIO_ResetOutputPin(LED_GPIO_Port, LED_Pin);
@@ -80,6 +89,22 @@ void Error_Handler(void);
 #define LED1_ON  LL_GPIO_SetOutputPin(LED1_GPIO_Port, LED1_Pin);
 #define LED1_OFF LL_GPIO_ResetOutputPin(LED1_GPIO_Port, LED1_Pin);
 #define LED1_TOG LL_GPIO_TogglePin(LED1_GPIO_Port, LED1_Pin);
+
+#define S1_ON  LL_GPIO_SetOutputPin(S1_GPIO_Port, S1_Pin);
+#define S1_OFF LL_GPIO_ResetOutputPin(S1_GPIO_Port, S1_Pin);
+#define S1_TOG LL_GPIO_TogglePin(S1_GPIO_Port, S1_Pin);
+
+#define S2_ON  LL_GPIO_SetOutputPin(S2_GPIO_Port, S2_Pin);
+#define S2_OFF LL_GPIO_ResetOutputPin(S2_GPIO_Port, S2_Pin);
+#define S2_TOG LL_GPIO_TogglePin(S2_GPIO_Port, S2_Pin);
+
+#define S3_ON  LL_GPIO_SetOutputPin(S3_GPIO_Port, S3_Pin);
+#define S3_OFF LL_GPIO_ResetOutputPin(S3_GPIO_Port, S3_Pin);
+#define S3_TOG LL_GPIO_TogglePin(S3_GPIO_Port, S3_Pin);
+
+#define S4_ON  LL_GPIO_SetOutputPin(S4_GPIO_Port, S4_Pin);
+#define S4_OFF LL_GPIO_ResetOutputPin(S4_GPIO_Port, S4_Pin);
+#define S4_TOG LL_GPIO_TogglePin(S4_GPIO_Port, S4_Pin);
 /* USER CODE END Private defines */
 
 #ifdef __cplusplus

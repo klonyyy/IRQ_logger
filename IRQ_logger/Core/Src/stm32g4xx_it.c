@@ -22,8 +22,7 @@
 #include "stm32g4xx_it.h"
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
-#include "IRQ_debug.h"
-
+#include "IRQ_logger.h"
 /* USER CODE END Includes */
 
 /* Private typedef -----------------------------------------------------------*/
@@ -179,11 +178,13 @@ void PendSV_Handler(void)
   */
 void SysTick_Handler(void)
 {
-  /* USER CODE BEGIN SysTick_IRQn 0 */
-  /* USER CODE END SysTick_IRQn 0 */
-  HAL_IncTick();
-  /* USER CODE BEGIN SysTick_IRQn 1 */
-  /* USER CODE END SysTick_IRQn 1 */
+	/* USER CODE BEGIN SysTick_IRQn 0 */
+	dbg_addIRQ(4, ENTER);
+	/* USER CODE END SysTick_IRQn 0 */
+	HAL_IncTick();
+	/* USER CODE BEGIN SysTick_IRQn 1 */
+	dbg_addIRQ(4, LEAVE);
+	/* USER CODE END SysTick_IRQn 1 */
 }
 
 /******************************************************************************/
@@ -194,30 +195,15 @@ void SysTick_Handler(void)
 /******************************************************************************/
 
 /**
-  * @brief This function handles DMA1 channel1 global interrupt.
-  */
-void DMA1_Channel1_IRQHandler(void)
-{
-  /* USER CODE BEGIN DMA1_Channel1_IRQn 0 */
-	if(LL_DMA_IsActiveFlag_TC1(DEBUG_UART_DMA))
-	{
-		LL_DMA_DisableChannel(DEBUG_UART_DMA, DEBUG_UART_DMA_TX);
-		LL_DMA_ClearFlag_TC1(DEBUG_UART_DMA);
-	}
-  /* USER CODE END DMA1_Channel1_IRQn 0 */
-
-  /* USER CODE BEGIN DMA1_Channel1_IRQn 1 */
-
-  /* USER CODE END DMA1_Channel1_IRQn 1 */
-}
-
-/**
   * @brief This function handles TIM1 update interrupt and TIM16 global interrupt.
   */
 void TIM1_UP_TIM16_IRQHandler(void)
 {
   /* USER CODE BEGIN TIM1_UP_TIM16_IRQn 0 */
+	S1_ON;
+//	S1_GPIO_Port->BSRR = S1_Pin;
 	dbg_addIRQ(1,ENTER);
+//	S1_GPIO_Port->BRR = S1_Pin;
 	LL_TIM_ClearFlag_UPDATE(TIM16);
 	/* dummy wait */
 	for(int i=0;i<0xaff;i++)
@@ -225,6 +211,7 @@ void TIM1_UP_TIM16_IRQHandler(void)
 		__asm volatile("nop");
 	}
 	dbg_addIRQ(1,LEAVE);
+	S1_OFF;
   /* USER CODE END TIM1_UP_TIM16_IRQn 0 */
 
   /* USER CODE BEGIN TIM1_UP_TIM16_IRQn 1 */
@@ -248,33 +235,21 @@ void TIM1_TRG_COM_TIM17_IRQHandler(void)
 }
 
 /**
-  * @brief This function handles USART3 global interrupt / USART3 wake-up interrupt through EXTI line 28.
-  */
-void USART3_IRQHandler(void)
-{
-  /* USER CODE BEGIN USART3_IRQn 0 */
-	dbg_control();
-  /* USER CODE END USART3_IRQn 0 */
-  /* USER CODE BEGIN USART3_IRQn 1 */
-
-  /* USER CODE END USART3_IRQn 1 */
-}
-
-/**
   * @brief This function handles TIM6 global interrupt, DAC1 and DAC3 channel underrun error interrupts.
   */
 void TIM6_DAC_IRQHandler(void)
 {
   /* USER CODE BEGIN TIM6_DAC_IRQn 0 */
-//    LED_ON;
+
+	S2_ON;
     dbg_addIRQ(2,ENTER);
 	LL_TIM_ClearFlag_UPDATE(TIM6);
 	for(int i=0;i<0xbff;i++)
 	{
-		__asm__("nop");
+		__asm volatile("nop");
 	}
 	dbg_addIRQ(2,LEAVE);
-//    LED_OFF;
+	S2_OFF;
   /* USER CODE END TIM6_DAC_IRQn 0 */
 
   /* USER CODE BEGIN TIM6_DAC_IRQn 1 */
@@ -288,15 +263,15 @@ void TIM6_DAC_IRQHandler(void)
 void TIM7_DAC_IRQHandler(void)
 {
   /* USER CODE BEGIN TIM7_DAC_IRQn 0 */
-	LED_ON;
+	S3_ON;
 	dbg_addIRQ(3,ENTER);
 	LL_TIM_ClearFlag_UPDATE(TIM7);
-	for(int i=0;i<0xf;i++)
+	for(int i=0;i<0xaf;i++)
 	{
-		__asm__("nop");
+		__asm volatile("nop");
 	}
 	dbg_addIRQ(3,LEAVE);
-	LED_OFF;
+	S3_OFF;
 
   /* USER CODE END TIM7_DAC_IRQn 0 */
 

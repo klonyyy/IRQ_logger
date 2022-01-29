@@ -12,17 +12,12 @@
 
 #define IRQ_DEBUG_OFF 0
 
-/* SETTINGS */
-
-#define MAX_ENTRIES 200
-
-#define DEBUG_TIM 			TIM17
-#define DEBUG_UART 			USART3
-#define DEBUG_UART_DMA		DMA1
-#define DEBUG_UART_DMA_TX	LL_DMA_CHANNEL_1
-
+/* EDIT THIS SECTION ACCORDINGLY */
+#define MAX_ENTRIES 	500
+#define DEBUG_TIM 		TIM17
 /* END */
 
+/* critical setions defines */
 #define DBG_ENTER_CRITICAL_SECTION  uint32_t primaskstate = __get_PRIMASK(); __disable_irq();
 #define DBG_LEAVE_CRITICAL_SECTION  __set_PRIMASK(primaskstate);
 
@@ -34,7 +29,7 @@ typedef enum
 
 typedef struct
 {
-	uint32_t timestamp_ms;
+	uint16_t timestamp_ms;
 	uint16_t timestamp_us;
 	uint8_t ID;
 	uint8_t enter;
@@ -50,7 +45,7 @@ typedef union
 debug_entry_t debug_buff[MAX_ENTRIES];
 
 void dbg_milisecond();
-void dbg_uartInit();
+void dbg_init();
 void dbg_uartSendBuffer();
 void dbg_setDebugOn();
 void dbg_setDebugOff();

@@ -1,111 +1,92 @@
-
-import struct
-from turtle import width
-from matplotlib.backend_bases import MouseEvent
-import serial
-import time
 import numpy as np
 import matplotlib.pyplot as plt
-from matplotlib.backend_bases import MouseButton
 from collections import Counter
+import struct
+import sys
+from elftools.elf.elffile import ELFFile
+from turtle import width
+import time
+from cursor import Cursor
+from stlink import STLink
 
-MAX_ENTRIES = 200
-ENTRY_SIZE = 8
+# EDIT THIS SECTION ACCORDINGLY
+ELF_FILE_PATH   = 'IRQ_Logger.elf'
+ENABLE_VAR_NAME = 'enabled'
+DEBUG_BUFF_VAR_NAME = "debug_buff"
+LOG_FILE_PATH = "test.bin"
+COLLECT_TIME = 1
+LABELS = ["IRQ1 (TIM16 highest)", "IRQ2 (TIM6 medium)", "IRQ3 (TIM7 lowest)", "IRQ4 (systick)"]
+# END OF USER DEFINED SECTION #
 
+ENTRY_SIZE = 6
 
-class SnaptoCursor(object):
-    def __init__(self, ax, x, y):
-        self.ax = ax
-        self.ly1 = ax.axvline(x[0],color='r', alpha=0.9)  # the vert line
-        self.ly2 = ax.axvline(x[0],color='g', alpha=0.9)  # the vert line
-        self.marker1, = ax.plot([x[0]],[y[0]], marker="o", color="crimson", zorder=3)
-        self.marker2, = ax.plot([x[0]],[y[0]], marker="o", color="crimson", zorder=3) 
-        self.x = x
-        self.y = y
-        self.cursor1On = 1
-        self.cursor2On = 1
-        self.cursor1x = 0
-        self.cursor2x = 0
-        self.txt1 = ax.text(0.7, 0.9, '')
-        self.txt2 = ax.text(0.7, 0.9, '')
+# open *.elf file 
+elf = ELFFile(open(ELF_FILE_PATH, 'rb'))
+# Get the symbol table entry for the respective symbol
+symtab = elf.get_section_by_name('.symtab')
+if not symtab:
+    print('No symbol table available in the specified *.elf file!')
+    sys.exit(1)
+# check if the defined symbols can be found in the *.elf file 
+try:
+    sym_enable = symtab.get_symbol_by_name(ENABLE_VAR_NAME)[0]
+    enable_addr = sym_enable['st_value']
+except:
+    print('Symbol ' + ENABLE_VAR_NAME + ' not found!')
+    sys.exit(1)
+try:
+    sym_debug_buff = symtab.get_symbol_by_name(DEBUG_BUFF_VAR_NAME)[0]
+    debug_buff_addr = sym_debug_buff['st_value']
+    debug_buff_size = sym_debug_buff['st_size']
+except:
+    print('Symbol ' + DEBUG_BUFF_VAR_NAME + ' not found!')
+    sys.exit(1)
 
-    def mouse_move(self, event):
-        if not event.inaxes: return
-        x, y = event.xdata, event.ydata
-        # indx = np.searchsorted(self.x, [x])[0]
-        # x = self.x[indx]
-        # y = self.y[indx]
-        if self.cursor1On == 1: 
-            self.ly1.set_xdata(x)
-            self.marker1.set_data([x],[y])
-            self.txt1.set_text('t1=%1.6f' % (x))
-            self.txt1.set_position((x,y))
-            self.cursor1x = x
-        if self.cursor2On == 1: 
-            self.ly2.set_xdata(x)
-            self.marker2.set_data([x],[y])
-            self.txt2.set_text('t2=%1.6f\nt2-t1=%f' % (x,abs(self.cursor1x-x)))
-            self.txt2.set_position((x,y))
-        self.ax.figure.canvas.draw_idle()
-    
-    def on_click(self,event):
-        if plt.get_current_fig_manager().toolbar.mode != '': return
+print('Found defined symbols:\r\n - enable address:' + hex(enable_addr) + '\r\n - debug_buff address:' + hex(debug_buff_addr) + ' debug_buff size:' + str(debug_buff_size))
+# calculate numer of entries based on buffer size from elf file 
+MAX_ENTRIES = int(debug_buff_size/ENTRY_SIZE)
 
-        if event.button == MouseButton.LEFT:
-            if self.cursor1On:
-                self.cursor1On = 0
-            else:
-                self.cursor1On = 1
+stlink = STLink()
+# if ST-Link is not available, just read data from the file
+if stlink.check() == 0:
+    # write enable byte to 1 and wait for the buffer to fill with data 
+    stlink.writeByte(memaddr=enable_addr,data = 0x01)
+    time.sleep(COLLECT_TIME)
+    # dump the filled buffer to the file
+    stlink.dump(memaddr=debug_buff_addr,memsize=debug_buff_size,file_path=LOG_FILE_PATH);
+    time.sleep(COLLECT_TIME)
+    print('ST-LINK found!')
+else:
+    print("ST-LINK not found! Using data from available log file")
 
-        if event.button == MouseButton.RIGHT:
-            if self.cursor2On:
-                self.cursor2On = 0
-            else:
-                self.cursor2On = 1
+# open log file
+f = open(LOG_FILE_PATH, "rb+")
 
-
-ser = serial.Serial('COM4',baudrate=2000000)  # open serial port
-ser.timeout = 0.5
-ser.write("@".encode())
-time.sleep(0.5)
-ser.write("!".encode())
-mybytearray = bytearray()
-mybytearray  = ser.read(MAX_ENTRIES*ENTRY_SIZE)
-print(mybytearray)
-print(len(mybytearray))
-ser.close()  
-
-if len(mybytearray) > 0:
-    f = open('./capture.bin', 'wb')
-    f.write(mybytearray)
-    f.close()
-
-f = open("./capture.bin", "rb")
 mybytearray = bytearray()
 
 IRQs = []
 data = []
+# write bytes to data vector and fill IRQs with all the available IRQ labels
 for i in range(MAX_ENTRIES-1):
-    data.append(struct.unpack("IHBB", f.read(ENTRY_SIZE)))
+    data.append(struct.unpack("HHBB", f.read(ENTRY_SIZE)))
     IRQs.append(data[i][2])
 
+# find all the IRQ IDs - these are the ones specified in the dbg_addIRQ() function
 IRQLabels = list(Counter(IRQs).keys())
 IRQLabels.sort()
-
-print(IRQLabels)
+print("Found the following IRQ labels: " + str(IRQLabels))
 
 IRQList = []
 timeList = []
 IRQStates = []
-
+# append lists to the IRQList and first states to IRQStates
 for i in range(len(IRQLabels)):
     l = []
     IRQList.append(l)
+    # the i*2 is to separate the plots vertically
     IRQStates.append(int(i*2))
 
-print(IRQList)   
-    
-
+# iterate through every entry, modify states in IRQStates[], add each entry twice to IRQList[] so that it forms rectangles on the plot
 for i in range(MAX_ENTRIES-1):
     timeList.append(data[i][0]*0.001 + data[i][1]*0.000001)
     for j in range(len(IRQLabels)):
@@ -118,15 +99,15 @@ for i in range(MAX_ENTRIES-1):
         IRQList[j].append(IRQStates[j])
     timeList.append(data[i][0]*0.001 + data[i][1]*0.000001)
 
+# create plot, add cursors
 fig, ax = plt.subplots()
-cursor1 = SnaptoCursor(ax,timeList,IRQList[0])
-cid1=  plt.connect('motion_notify_event', cursor1.mouse_move)
-cid2 = plt.connect('button_press_event', cursor1.on_click)
+cursor = Cursor(ax,timeList,IRQList[0])
+cid1=  plt.connect('motion_notify_event', cursor.mouse_move)
+cid2 = plt.connect('button_press_event', cursor.on_click)
 
-labels = ["IRQ1 (TIM16 highest)", "IRQ2 (TIM6 medium)", "IRQ3 (TIM7 lowest)"]
-
+# plot it!
 for i in range(len(IRQLabels)):
-    ax.plot(timeList,IRQList[i],marker='o',linewidth=2, label=labels[i])
+    ax.plot(timeList,IRQList[i],linewidth=2, label=LABELS[i])
 ax.set_ylim([-1, len(IRQLabels)*2 + 1])
 ax.legend()
 ax.grid()
