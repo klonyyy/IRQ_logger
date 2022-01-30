@@ -2,4 +2,4 @@ IRQ_logger/.settings
 IRQ_logger/Debug
 IRQ_logger/Release
 tests/*
-src/python_decoder/__pychache__/*
+src/python_decoder/__pycache__/*
