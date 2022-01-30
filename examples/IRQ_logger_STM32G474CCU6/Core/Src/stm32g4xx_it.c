@@ -178,13 +178,13 @@ void PendSV_Handler(void)
   */
 void SysTick_Handler(void)
 {
-	/* USER CODE BEGIN SysTick_IRQn 0 */
-	dbg_addIRQ(4, ENTER);
-	/* USER CODE END SysTick_IRQn 0 */
-	HAL_IncTick();
-	/* USER CODE BEGIN SysTick_IRQn 1 */
-	dbg_addIRQ(4, LEAVE);
-	/* USER CODE END SysTick_IRQn 1 */
+  /* USER CODE BEGIN SysTick_IRQn 0 */
+	IRQ_logger_add_entry(4, ENTER);
+  /* USER CODE END SysTick_IRQn 0 */
+  HAL_IncTick();
+  /* USER CODE BEGIN SysTick_IRQn 1 */
+	IRQ_logger_add_entry(4, LEAVE);
+  /* USER CODE END SysTick_IRQn 1 */
 }
 
 /******************************************************************************/
@@ -200,18 +200,18 @@ void SysTick_Handler(void)
 void TIM1_UP_TIM16_IRQHandler(void)
 {
   /* USER CODE BEGIN TIM1_UP_TIM16_IRQn 0 */
-	S1_ON;
-//	S1_GPIO_Port->BSRR = S1_Pin;
-	dbg_addIRQ(1,ENTER);
-//	S1_GPIO_Port->BRR = S1_Pin;
+//	S1_ON;
+	S1_GPIO_Port->BSRR = S1_Pin;
+	IRQ_logger_add_entry(1,ENTER);
+	S1_GPIO_Port->BRR = S1_Pin;
 	LL_TIM_ClearFlag_UPDATE(TIM16);
 	/* dummy wait */
 	for(int i=0;i<0xaff;i++)
 	{
 		__asm volatile("nop");
 	}
-	dbg_addIRQ(1,LEAVE);
-	S1_OFF;
+	IRQ_logger_add_entry(1,LEAVE);
+//	S1_OFF;
   /* USER CODE END TIM1_UP_TIM16_IRQn 0 */
 
   /* USER CODE BEGIN TIM1_UP_TIM16_IRQn 1 */
@@ -225,8 +225,8 @@ void TIM1_UP_TIM16_IRQHandler(void)
 void TIM1_TRG_COM_TIM17_IRQHandler(void)
 {
   /* USER CODE BEGIN TIM1_TRG_COM_TIM17_IRQn 0 */
-	LL_TIM_ClearFlag_UPDATE(TIM17);
-	dbg_milisecond();
+	LL_TIM_ClearFlag_UPDATE(IRQLOGGER_TIM);
+	IRQ_logger_millisecond();
   /* USER CODE END TIM1_TRG_COM_TIM17_IRQn 0 */
 
   /* USER CODE BEGIN TIM1_TRG_COM_TIM17_IRQn 1 */
@@ -242,13 +242,13 @@ void TIM6_DAC_IRQHandler(void)
   /* USER CODE BEGIN TIM6_DAC_IRQn 0 */
 
 	S2_ON;
-    dbg_addIRQ(2,ENTER);
+    IRQ_logger_add_entry(2,ENTER);
 	LL_TIM_ClearFlag_UPDATE(TIM6);
 	for(int i=0;i<0xbff;i++)
 	{
 		__asm volatile("nop");
 	}
-	dbg_addIRQ(2,LEAVE);
+	IRQ_logger_add_entry(2,LEAVE);
 	S2_OFF;
   /* USER CODE END TIM6_DAC_IRQn 0 */
 
@@ -264,13 +264,13 @@ void TIM7_DAC_IRQHandler(void)
 {
   /* USER CODE BEGIN TIM7_DAC_IRQn 0 */
 	S3_ON;
-	dbg_addIRQ(3,ENTER);
+	IRQ_logger_add_entry(3,ENTER);
 	LL_TIM_ClearFlag_UPDATE(TIM7);
 	for(int i=0;i<0xaf;i++)
 	{
 		__asm volatile("nop");
 	}
-	dbg_addIRQ(3,LEAVE);
+	IRQ_logger_add_entry(3,LEAVE);
 	S3_OFF;
 
   /* USER CODE END TIM7_DAC_IRQn 0 */

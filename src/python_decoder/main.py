@@ -1,24 +1,24 @@
 import numpy as np
 import matplotlib.pyplot as plt
-from collections import Counter
 import struct
 import sys
+import time
+from collections import Counter
 from elftools.elf.elffile import ELFFile
 from turtle import width
-import time
 from cursor import Cursor
 from stlink import STLink
 
 # EDIT THIS SECTION ACCORDINGLY
-ELF_FILE_PATH   = 'IRQ_Logger.elf'
-ENABLE_VAR_NAME = 'enabled'
-DEBUG_BUFF_VAR_NAME = "debug_buff"
-LOG_FILE_PATH = "test.bin"
-COLLECT_TIME = 1
-LABELS = ["IRQ1 (TIM16 highest)", "IRQ2 (TIM6 medium)", "IRQ3 (TIM7 lowest)", "IRQ4 (systick)"]
+ELF_FILE_PATH   = 'C:/Users/klonyyy/PROJECTS/IRQ_logger/examples/IRQ_logger_STM32G474CCU6/Debug/IRQ_logger_STM32G474CCU6.elf'
+ENABLE_VAR_NAME = 'logging_enabled'             # name of the variable that triggers logging
+DEBUG_BUFF_VAR_NAME = "IRQ_logger_buff"         # name of the log buffer
+LOG_FILE_PATH = "test.bin"                      # name of the file where binary log will be saved (later you can reuse previously recoded data)
+COLLECT_TIME = 1                                # approximate time needed for the buffer to be filled up
+LABELS = ["IRQ1 (TIM16 highest)", "IRQ2 (TIM6 medium)", "IRQ3 (TIM7 lowest)", "IRQ4 (systick)"]  
 # END OF USER DEFINED SECTION #
 
-ENTRY_SIZE = 6
+ENTRY_SIZE = 6 # single log entry size in bytes
 
 # open *.elf file 
 elf = ELFFile(open(ELF_FILE_PATH, 'rb'))
