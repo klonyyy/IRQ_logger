@@ -200,10 +200,8 @@ void SysTick_Handler(void)
 void TIM1_UP_TIM16_IRQHandler(void)
 {
   /* USER CODE BEGIN TIM1_UP_TIM16_IRQn 0 */
-//	S1_ON;
-	S1_GPIO_Port->BSRR = S1_Pin;
+	S1_ON;
 	IRQ_logger_add_entry(1,ENTER);
-	S1_GPIO_Port->BRR = S1_Pin;
 	LL_TIM_ClearFlag_UPDATE(TIM16);
 	/* dummy wait */
 	for(int i=0;i<0xaff;i++)
@@ -211,7 +209,7 @@ void TIM1_UP_TIM16_IRQHandler(void)
 		__asm volatile("nop");
 	}
 	IRQ_logger_add_entry(1,LEAVE);
-//	S1_OFF;
+	S1_OFF;
   /* USER CODE END TIM1_UP_TIM16_IRQn 0 */
 
   /* USER CODE BEGIN TIM1_UP_TIM16_IRQn 1 */
