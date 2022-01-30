@@ -178,13 +178,13 @@ void PendSV_Handler(void)
   */
 void SysTick_Handler(void)
 {
-  /* USER CODE BEGIN SysTick_IRQn 0 */
+	/* USER CODE BEGIN SysTick_IRQn 0 */
 	IRQ_logger_add_entry(4, ENTER);
-  /* USER CODE END SysTick_IRQn 0 */
-  HAL_IncTick();
-  /* USER CODE BEGIN SysTick_IRQn 1 */
+	/* USER CODE END SysTick_IRQn 0 */
+	HAL_IncTick();
+	/* USER CODE BEGIN SysTick_IRQn 1 */
 	IRQ_logger_add_entry(4, LEAVE);
-  /* USER CODE END SysTick_IRQn 1 */
+	/* USER CODE END SysTick_IRQn 1 */
 }
 
 /******************************************************************************/
@@ -199,7 +199,7 @@ void SysTick_Handler(void)
   */
 void TIM1_UP_TIM16_IRQHandler(void)
 {
-  /* USER CODE BEGIN TIM1_UP_TIM16_IRQn 0 */
+	/* USER CODE BEGIN TIM1_UP_TIM16_IRQn 0 */
 	S1_ON;
 	IRQ_logger_add_entry(1,ENTER);
 	LL_TIM_ClearFlag_UPDATE(TIM16);
@@ -208,13 +208,13 @@ void TIM1_UP_TIM16_IRQHandler(void)
 	{
 		__asm volatile("nop");
 	}
-	IRQ_logger_add_entry(1,LEAVE);
+    IRQ_logger_add_entry(1,LEAVE);
 	S1_OFF;
-  /* USER CODE END TIM1_UP_TIM16_IRQn 0 */
+	/* USER CODE END TIM1_UP_TIM16_IRQn 0 */
 
-  /* USER CODE BEGIN TIM1_UP_TIM16_IRQn 1 */
+	/* USER CODE BEGIN TIM1_UP_TIM16_IRQn 1 */
 
-  /* USER CODE END TIM1_UP_TIM16_IRQn 1 */
+	/* USER CODE END TIM1_UP_TIM16_IRQn 1 */
 }
 
 /**
@@ -222,14 +222,14 @@ void TIM1_UP_TIM16_IRQHandler(void)
   */
 void TIM1_TRG_COM_TIM17_IRQHandler(void)
 {
-  /* USER CODE BEGIN TIM1_TRG_COM_TIM17_IRQn 0 */
+	/* USER CODE BEGIN TIM1_TRG_COM_TIM17_IRQn 0 */
 	LL_TIM_ClearFlag_UPDATE(IRQLOGGER_TIM);
 	IRQ_logger_millisecond();
-  /* USER CODE END TIM1_TRG_COM_TIM17_IRQn 0 */
+	/* USER CODE END TIM1_TRG_COM_TIM17_IRQn 0 */
 
-  /* USER CODE BEGIN TIM1_TRG_COM_TIM17_IRQn 1 */
+	/* USER CODE BEGIN TIM1_TRG_COM_TIM17_IRQn 1 */
 
-  /* USER CODE END TIM1_TRG_COM_TIM17_IRQn 1 */
+	/* USER CODE END TIM1_TRG_COM_TIM17_IRQn 1 */
 }
 
 /**
@@ -237,10 +237,9 @@ void TIM1_TRG_COM_TIM17_IRQHandler(void)
   */
 void TIM6_DAC_IRQHandler(void)
 {
-  /* USER CODE BEGIN TIM6_DAC_IRQn 0 */
-
+	/* USER CODE BEGIN TIM6_DAC_IRQn 0 */
 	S2_ON;
-    IRQ_logger_add_entry(2,ENTER);
+	IRQ_logger_add_entry(2,ENTER);
 	LL_TIM_ClearFlag_UPDATE(TIM6);
 	for(int i=0;i<0xbff;i++)
 	{
@@ -248,11 +247,11 @@ void TIM6_DAC_IRQHandler(void)
 	}
 	IRQ_logger_add_entry(2,LEAVE);
 	S2_OFF;
-  /* USER CODE END TIM6_DAC_IRQn 0 */
+	/* USER CODE END TIM6_DAC_IRQn 0 */
 
-  /* USER CODE BEGIN TIM6_DAC_IRQn 1 */
+	/* USER CODE BEGIN TIM6_DAC_IRQn 1 */
 
-  /* USER CODE END TIM6_DAC_IRQn 1 */
+	/* USER CODE END TIM6_DAC_IRQn 1 */
 }
 
 /**
@@ -260,7 +259,7 @@ void TIM6_DAC_IRQHandler(void)
   */
 void TIM7_DAC_IRQHandler(void)
 {
-  /* USER CODE BEGIN TIM7_DAC_IRQn 0 */
+	/* USER CODE BEGIN TIM7_DAC_IRQn 0 */
 	S3_ON;
 	IRQ_logger_add_entry(3,ENTER);
 	LL_TIM_ClearFlag_UPDATE(TIM7);
@@ -270,12 +269,11 @@ void TIM7_DAC_IRQHandler(void)
 	}
 	IRQ_logger_add_entry(3,LEAVE);
 	S3_OFF;
+	/* USER CODE END TIM7_DAC_IRQn 0 */
 
-  /* USER CODE END TIM7_DAC_IRQn 0 */
+	/* USER CODE BEGIN TIM7_DAC_IRQn 1 */
 
-  /* USER CODE BEGIN TIM7_DAC_IRQn 1 */
-
-  /* USER CODE END TIM7_DAC_IRQn 1 */
+	/* USER CODE END TIM7_DAC_IRQn 1 */
 }
 
 /* USER CODE BEGIN 1 */

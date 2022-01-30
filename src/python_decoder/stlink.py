@@ -38,9 +38,8 @@ class STLink():
                 ],
                 stderr=subprocess.STDOUT,
                 stdin=subprocess.PIPE).decode().splitlines()
-        except subprocess.CalledProcessError as err:
-            output = err.output.decode().splitlines()
-            print("Error during dump memory attempt! ST-LINK CLI output: " + output)
+        except:
+            print("Error during dump memory attempt! Please check the connection with target device!")
             sys.exit(1)
 
     def writeByte(self, probe: int = 0, memaddr: int = 0x20000000, data: int = 0x00):
@@ -60,7 +59,6 @@ class STLink():
                 ],
                 stderr=subprocess.STDOUT,
                 stdin=subprocess.PIPE).decode().splitlines()
-        except subprocess.CalledProcessError as err:
-            output = err.output.decode().splitlines()
-            print("Error during write byte attempt! ST-LINK CLI output: " + output)
+        except: 
+            print("Error during write byte attempt! Please check the connection with target device!")
             sys.exit(1)

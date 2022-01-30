@@ -11,7 +11,7 @@
 
 volatile uint32_t current_idx;
 volatile uint32_t millisecond;
-volatile uint8_t logging_enabled = 0;
+volatile uint8_t logging_enabled;
 
 void IRQ_logger_init()
 {
@@ -19,9 +19,10 @@ void IRQ_logger_init()
 	LL_TIM_EnableIT_UPDATE(IRQLOGGER_TIM);
 	LL_TIM_EnableCounter(IRQLOGGER_TIM);
 }
-void IRQ_logger_milisecond()
+void IRQ_logger_millisecond()
 {
 	millisecond++;
+	if(millisecond==65535)millisecond = 0;
 }
 void IRQ_logger_add_entry(uint8_t ID, state_et state)
 {
@@ -58,6 +59,5 @@ uint16_t IRQ_logger_get_idx()
 {
 	return current_idx;
 }
-
 
 #pragma GCC pop_options
