@@ -29,13 +29,13 @@ class Cursor(object):
             self.ly1.set_xdata(x)
             self.marker1.set_data([x],[y])
             self.txt1.set_text('t1=%1.6f' % (x))
-            self.txt1.set_position((x,y-0.5))
+            self.txt1.set_position((x,y))
             self.cursor1x = x
         if self.cursor2On == 1: 
             self.ly2.set_xdata(x)
             self.marker2.set_data([x],[y])
             self.txt2.set_text('t2=%1.6f\nt2-t1=%f' % (x,abs(self.cursor1x-x)))
-            self.txt2.set_position((x,y+0.5))
+            self.txt2.set_position((x,y))
         self.ax.figure.canvas.draw_idle()
     
     def on_click(self,event):
