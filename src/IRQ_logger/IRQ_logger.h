@@ -34,7 +34,7 @@ typedef struct
 	uint8_t ID;
 	uint8_t state;
 
-}__attribute__((packed, aligned(1)))log_entry_st;
+}__attribute__((packed))log_entry_st;
 
 typedef union
 {
