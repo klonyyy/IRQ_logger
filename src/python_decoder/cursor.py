@@ -18,6 +18,7 @@ class Cursor(object):
         self.cursor2x = 0
         self.txt1 = ax.text(0.7, 0.9, '')
         self.txt2 = ax.text(0.7, 0.9, '')
+        self.txtDiff = ax.text(0.7,0.9,'',transform=ax.transAxes)
 
     def mouse_move(self, event):
         if not event.inaxes: return
@@ -28,14 +29,18 @@ class Cursor(object):
         if self.cursor1On == 1: 
             self.ly1.set_xdata(x)
             self.marker1.set_data([x],[y])
-            self.txt1.set_text('t1=%1.6f' % (x))
+            self.txt1.set_text('  t1=%1.6f' % (x))
             self.txt1.set_position((x,y))
             self.cursor1x = x
         if self.cursor2On == 1: 
             self.ly2.set_xdata(x)
             self.marker2.set_data([x],[y])
-            self.txt2.set_text('t2=%1.6f\nt2-t1=%f' % (x,abs(self.cursor1x-x)))
+            self.txt2.set_text('  t2=%1.6f\n' % (x))
             self.txt2.set_position((x,y))
+            self.cursor2x = x
+            
+        self.txtDiff.set_text('  t2-t1=%f \n' % (abs(self.cursor1x-self.cursor2x)))
+        self.txtDiff.set_position((0,0.9))
         self.ax.figure.canvas.draw_idle()
     
     def on_click(self,event):

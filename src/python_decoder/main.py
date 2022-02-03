@@ -106,6 +106,7 @@ cid1=  plt.connect('motion_notify_event', cursor.mouse_move)
 cid2 = plt.connect('button_press_event', cursor.on_click)
 
 # plot it!
+fig.suptitle('IRQ Logger', fontsize=14, fontweight='bold')
 for i in range(len(IRQLabels)):
     ax.plot(timeList,IRQList[i],linewidth=2, label=LABELS[i])
 ax.set_ylim([-1, len(IRQLabels)*2 + 1])
