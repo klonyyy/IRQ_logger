@@ -1,12 +1,10 @@
 # STM32 interrupt logger (IRQ logger)
 
-A simple, minimalistic tool for diagnosing interrupt execution times without additional hardware
-
 ![ ](./docs/photo/plot.gif)
 
 ## Motivation
 
-I was fed up with the need to connect my scope or logic analyzer to the PCB whenever I wanted to check if the interrupts are executed the way I wanted them to. This made me create this super-easy tool to diagnose interrupts with just a little bit of RAM for the logs buffer and an overhead of 400ns per single log entry (or 200ns without logging turned on) @ 170 Mhz core clock. 
+I was fed up with the need to connect my scope or logic analyzer to the PCB whenever I wanted to check if the interrupts are executed the way I wanted them to. This made me create this super-easy tool to diagnose interrupts with just a bit of RAM memorry for the logs buffer and an overhead of 400ns per single log entry (or 200ns without logging turned on) @ 170 Mhz core clock. 
 
 ## How it works
 
